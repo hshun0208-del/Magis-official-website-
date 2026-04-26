@@ -1,0 +1,1440 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Magis Co., Ltd.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Lato:wght@100;300;400&family=Noto+Sans+JP:wght@100;300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --off-black: #111111;
+    --dark: #1a1a1a;
+    --mid: #2e2e2e;
+    --grey: #6b6b6b;
+    --light-grey: #a8a8a8;
+    --off-white: #e8e5e0;
+    --white: #f5f2ed;
+    --accent: #c9a96e;
+    --accent-dim: rgba(201, 169, 110, 0.15);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--off-white);
+    font-family: 'Lato', 'Noto Sans JP', sans-serif;
+    font-weight: 300;
+    font-size: 14px;
+    line-height: 1.8;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    position: fixed;
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s ease, width 0.3s ease, height 0.3s ease, background 0.3s ease;
+  }
+  .cursor-ring {
+    position: fixed;
+    width: 32px; height: 32px;
+    border: 1px solid rgba(201,169,110,0.4);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: transform 0.15s ease, width 0.3s ease, height 0.3s ease;
+  }
+  body:hover .cursor { opacity: 1; }
+
+  /* Nav */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 28px 48px;
+    mix-blend-mode: normal;
+    transition: background 0.5s ease, padding 0.4s ease;
+  }
+  nav.scrolled {
+    background: rgba(10,10,10,0.92);
+    backdrop-filter: blur(12px);
+    padding: 18px 48px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 300;
+    letter-spacing: 0.3em;
+    color: var(--off-white);
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+  .nav-logo span { color: var(--accent); }
+  .nav-links {
+    display: flex;
+    gap: 36px;
+    list-style: none;
+  }
+  .nav-links a {
+    color: var(--light-grey);
+    text-decoration: none;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    transition: color 0.3s ease;
+    font-weight: 400;
+  }
+  .nav-links a:hover { color: var(--accent); }
+  .nav-menu-btn {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: none;
+    background: none;
+    border: none;
+  }
+  .nav-menu-btn span {
+    display: block;
+    width: 24px;
+    height: 1px;
+    background: var(--off-white);
+    transition: all 0.3s ease;
+  }
+
+  /* Mobile menu */
+  .mobile-menu {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: var(--black);
+    z-index: 999;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  .mobile-menu.open { display: flex; opacity: 1; }
+  .mobile-menu a {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 36px;
+    font-weight: 300;
+    color: var(--off-white);
+    text-decoration: none;
+    letter-spacing: 0.1em;
+    transition: color 0.3s;
+  }
+  .mobile-menu a:hover { color: var(--accent); }
+  .mobile-menu-close {
+    position: absolute;
+    top: 28px; right: 48px;
+    background: none; border: none;
+    color: var(--off-white);
+    font-size: 28px;
+    cursor: none;
+    line-height: 1;
+  }
+
+  /* Sections */
+  section { min-height: 100vh; position: relative; }
+
+  /* Hero */
+  #home {
+    display: grid;
+    place-items: center;
+    background: var(--black);
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 70% at 20% 50%, rgba(201,169,110,0.06) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 50% at 80% 30%, rgba(255,255,255,0.02) 0%, transparent 50%);
+  }
+  .hero-grain {
+    position: absolute;
+    inset: 0;
+    opacity: 0.04;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-size: 256px;
+  }
+  .hero-content {
+    position: relative;
+    text-align: center;
+    z-index: 1;
+    padding: 0 24px;
+  }
+  .hero-eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.3s forwards;
+  }
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(64px, 12vw, 160px);
+    font-weight: 300;
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+    color: var(--off-white);
+    opacity: 0;
+    animation: fadeUp 1.2s ease 0.5s forwards;
+  }
+  .hero-title em {
+    font-style: italic;
+    color: var(--accent);
+  }
+  .hero-sub {
+    margin-top: 40px;
+    font-size: 11px;
+    letter-spacing: 0.35em;
+    color: var(--grey);
+    text-transform: uppercase;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.9s forwards;
+  }
+  .hero-scroll {
+    position: absolute;
+    bottom: 48px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    opacity: 0;
+    animation: fadeUp 1s ease 1.5s forwards;
+  }
+  .hero-scroll span {
+    font-size: 9px;
+    letter-spacing: 0.35em;
+    color: var(--grey);
+    text-transform: uppercase;
+  }
+  .scroll-line {
+    width: 1px;
+    height: 48px;
+    background: linear-gradient(to bottom, var(--accent), transparent);
+    animation: scrollPulse 2s ease infinite;
+  }
+
+  /* Two pillars */
+  .hero-pillars {
+    position: absolute;
+    bottom: 120px;
+    left: 0; right: 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 80px;
+    opacity: 0;
+    animation: fadeUp 1s ease 1.2s forwards;
+  }
+  .pillar-link {
+    text-decoration: none;
+    color: var(--off-white);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: opacity 0.3s;
+  }
+  .pillar-link:hover { opacity: 0.7; }
+  .pillar-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+  }
+  .pillar-name {
+    font-size: 13px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+  }
+  .pillar-arrow {
+    font-size: 10px;
+    color: var(--grey);
+    letter-spacing: 0.1em;
+  }
+
+  /* Divider */
+  .divider {
+    width: 1px;
+    height: 60px;
+    background: linear-gradient(to bottom, transparent, var(--accent), transparent);
+    margin: 0 auto 80px;
+  }
+
+  /* Section header */
+  .section-header {
+    margin-bottom: 80px;
+  }
+  .section-label {
+    font-size: 9px;
+    letter-spacing: 0.45em;
+    color: var(--accent);
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 20px;
+  }
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(36px, 5vw, 72px);
+    font-weight: 300;
+    line-height: 1.1;
+    color: var(--off-white);
+  }
+  .section-title em { font-style: italic; color: var(--accent); }
+
+  /* About */
+  #about {
+    background: var(--off-black);
+    padding: 160px 80px;
+    min-height: auto;
+  }
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 120px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .about-left { }
+  .about-mission {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(20px, 2.5vw, 28px);
+    font-weight: 300;
+    line-height: 1.6;
+    color: var(--off-white);
+    margin-bottom: 48px;
+    font-style: italic;
+  }
+  .about-body {
+    font-size: 13px;
+    line-height: 2;
+    color: var(--light-grey);
+    margin-bottom: 24px;
+  }
+  .about-right { }
+  .ceo-card {
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding-top: 40px;
+    margin-bottom: 60px;
+  }
+  .ceo-label {
+    font-size: 9px;
+    letter-spacing: 0.35em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    display: block;
+  }
+  .ceo-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px;
+    font-weight: 300;
+    margin-bottom: 4px;
+  }
+  .ceo-title {
+    font-size: 11px;
+    color: var(--grey);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  .ceo-bio {
+    font-size: 13px;
+    line-height: 2;
+    color: var(--light-grey);
+  }
+  .company-info {
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding-top: 40px;
+  }
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .info-label {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--grey);
+    text-transform: uppercase;
+    min-width: 120px;
+  }
+  .info-value {
+    font-size: 13px;
+    color: var(--light-grey);
+    text-align: right;
+  }
+
+  /* Brands */
+  #brands {
+    background: var(--black);
+    padding: 160px 80px;
+    min-height: auto;
+  }
+  .brands-container { max-width: 1200px; margin: 0 auto; }
+  .brand-block {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    margin-bottom: 120px;
+    border: 1px solid rgba(255,255,255,0.06);
+    overflow: hidden;
+  }
+  .brand-block:nth-child(even) .brand-visual { order: 2; }
+  .brand-block:nth-child(even) .brand-info { order: 1; }
+  .brand-visual {
+    min-height: 480px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .brand-visual-goar {
+    background:
+      radial-gradient(ellipse 80% 80% at 50% 50%, rgba(20,20,20,1) 0%, var(--black) 100%);
+    border-right: 1px solid rgba(255,255,255,0.04);
+  }
+  .brand-visual-adams {
+    background:
+      radial-gradient(ellipse 80% 80% at 50% 50%, rgba(201,169,110,0.08) 0%, var(--black) 100%);
+    border-left: 1px solid rgba(255,255,255,0.04);
+  }
+  .brand-visual-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 80px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.06);
+    letter-spacing: -0.03em;
+    user-select: none;
+    line-height: 1;
+    text-align: center;
+  }
+  .brand-info {
+    padding: 72px 64px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .brand-tag {
+    font-size: 9px;
+    letter-spacing: 0.45em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  .brand-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 48px;
+    font-weight: 300;
+    line-height: 1.1;
+    margin-bottom: 32px;
+    color: var(--off-white);
+  }
+  .brand-desc {
+    font-size: 13px;
+    line-height: 2;
+    color: var(--light-grey);
+    margin-bottom: 48px;
+  }
+  .btn-outline {
+    display: inline-block;
+    padding: 14px 36px;
+    border: 1px solid rgba(201,169,110,0.4);
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    transition: all 0.4s ease;
+    align-self: flex-start;
+  }
+  .btn-outline:hover {
+    background: var(--accent);
+    color: var(--black);
+    border-color: var(--accent);
+  }
+
+  /* Service */
+  #service {
+    background: var(--off-black);
+    padding: 160px 80px;
+    min-height: auto;
+  }
+  .service-container { max-width: 1200px; margin: 0 auto; }
+  .service-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: rgba(255,255,255,0.06);
+    margin-bottom: 120px;
+  }
+  .service-card {
+    background: var(--off-black);
+    padding: 56px 48px;
+    transition: background 0.4s ease;
+  }
+  .service-card:hover { background: var(--dark); }
+  .service-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 48px;
+    font-weight: 300;
+    color: rgba(201,169,110,0.2);
+    line-height: 1;
+    margin-bottom: 32px;
+  }
+  .service-title {
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--off-white);
+    margin-bottom: 20px;
+  }
+  .service-desc {
+    font-size: 13px;
+    line-height: 2;
+    color: var(--grey);
+  }
+
+
+
+  /* Journal */
+  #journal {
+    background: var(--black);
+    padding: 160px 80px;
+    min-height: auto;
+  }
+  .journal-container { max-width: 1200px; margin: 0 auto; }
+  .journal-cats {
+    display: flex;
+    gap: 32px;
+    margin-bottom: 64px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    padding-bottom: 0;
+  }
+  .cat-btn {
+    background: none;
+    border: none;
+    color: var(--grey);
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    padding-bottom: 20px;
+    cursor: none;
+    border-bottom: 1px solid transparent;
+    transition: all 0.3s;
+    margin-bottom: -1px;
+  }
+  .cat-btn.active, .cat-btn:hover {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+  .journal-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 48px;
+  }
+  .journal-card {
+    cursor: none;
+    transition: opacity 0.3s;
+  }
+  .journal-card:hover { opacity: 0.75; }
+  .journal-thumb {
+    width: 100%;
+    aspect-ratio: 4/3;
+    background: var(--dark);
+    margin-bottom: 24px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .journal-thumb-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 48px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.04);
+  }
+  .journal-cat-tag {
+    font-size: 9px;
+    letter-spacing: 0.35em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: block;
+  }
+  .journal-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 300;
+    line-height: 1.4;
+    color: var(--off-white);
+    margin-bottom: 12px;
+  }
+  .journal-date {
+    font-size: 10px;
+    color: var(--grey);
+    letter-spacing: 0.15em;
+  }
+
+  /* Press / Partners */
+  #partners {
+    background: var(--off-black);
+    padding: 120px 80px;
+    min-height: auto;
+  }
+  .partners-container { max-width: 1200px; margin: 0 auto; }
+  .partners-row {
+    display: flex;
+    gap: 1px;
+    background: rgba(255,255,255,0.06);
+    margin-top: 60px;
+    flex-wrap: wrap;
+  }
+  .partner-cell {
+    flex: 1;
+    min-width: 160px;
+    background: var(--off-black);
+    padding: 40px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    color: var(--grey);
+    text-transform: uppercase;
+    text-align: center;
+    transition: background 0.3s, color 0.3s;
+  }
+  .partner-cell:hover { background: var(--dark); color: var(--accent); }
+  .press-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 60px;
+    padding: 16px 40px;
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--light-grey);
+    text-decoration: none;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    transition: all 0.4s;
+  }
+  .press-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .press-btn-arrow { font-size: 14px; }
+
+  /* Recruit */
+  #recruit {
+    background: var(--black);
+    padding: 160px 80px;
+    min-height: auto;
+  }
+  .recruit-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 120px;
+  }
+  .recruit-message {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(20px, 2vw, 26px);
+    font-weight: 300;
+    line-height: 1.7;
+    font-style: italic;
+    color: var(--off-white);
+    margin-bottom: 40px;
+  }
+  .recruit-body {
+    font-size: 13px;
+    line-height: 2;
+    color: var(--light-grey);
+  }
+  .jobs-list { list-style: none; }
+  .job-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    cursor: none;
+    transition: padding-left 0.3s;
+  }
+  .job-item:hover { padding-left: 12px; }
+  .job-title {
+    font-size: 14px;
+    color: var(--off-white);
+    letter-spacing: 0.05em;
+  }
+  .job-type {
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+  .job-arrow { color: var(--grey); font-size: 12px; }
+
+  /* Contact */
+  #contact {
+    background: var(--off-black);
+    padding: 160px 80px;
+    min-height: auto;
+  }
+  .contact-container {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .contact-intro {
+    font-size: 13px;
+    line-height: 2;
+    color: var(--light-grey);
+    margin-bottom: 72px;
+  }
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-bottom: 48px;
+  }
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+  }
+  .form-field {
+    position: relative;
+  }
+  .form-field input,
+  .form-field select,
+  .form-field textarea {
+    width: 100%;
+    background: var(--dark);
+    border: none;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    padding: 20px 24px;
+    color: var(--off-white);
+    font-family: 'Lato', sans-serif;
+    font-size: 13px;
+    font-weight: 300;
+    outline: none;
+    transition: border-color 0.3s, background 0.3s;
+    cursor: none;
+  }
+  .form-field input:focus,
+  .form-field select:focus,
+  .form-field textarea:focus {
+    border-bottom-color: var(--accent);
+    background: rgba(201,169,110,0.03);
+  }
+  .form-field input::placeholder,
+  .form-field textarea::placeholder {
+    color: var(--grey);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+  .form-field select option { background: var(--dark); }
+  .form-field textarea { height: 140px; resize: none; }
+  .btn-submit {
+    display: inline-block;
+    padding: 18px 72px;
+    background: var(--accent);
+    color: var(--black);
+    border: none;
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    cursor: none;
+    transition: all 0.4s ease;
+    font-family: 'Lato', sans-serif;
+    font-weight: 400;
+    margin-top: 24px;
+  }
+  .btn-submit:hover { background: var(--off-white); }
+
+  /* Footer */
+  footer {
+    background: var(--black);
+    padding: 80px 80px 48px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 64px;
+    margin-bottom: 80px;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 80px;
+  }
+  .footer-brand {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 300;
+    letter-spacing: 0.2em;
+    color: var(--off-white);
+    margin-bottom: 20px;
+  }
+  .footer-brand span { color: var(--accent); }
+  .footer-tagline {
+    font-size: 11px;
+    color: var(--grey);
+    line-height: 2;
+    letter-spacing: 0.05em;
+  }
+  .footer-col-title {
+    font-size: 9px;
+    letter-spacing: 0.4em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  .footer-links { list-style: none; }
+  .footer-links li { margin-bottom: 12px; }
+  .footer-links a {
+    color: var(--grey);
+    text-decoration: none;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    transition: color 0.3s;
+  }
+  .footer-links a:hover { color: var(--accent); }
+  .footer-bottom {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
+  .footer-copy {
+    font-size: 10px;
+    color: var(--grey);
+    letter-spacing: 0.15em;
+  }
+  .footer-legal {
+    display: flex;
+    gap: 32px;
+  }
+  .footer-legal a {
+    font-size: 10px;
+    color: var(--grey);
+    text-decoration: none;
+    letter-spacing: 0.1em;
+    transition: color 0.3s;
+  }
+  .footer-legal a:hover { color: var(--accent); }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 1; transform: scaleY(1); }
+    50% { opacity: 0.3; transform: scaleY(0.7); }
+  }
+
+  /* Reveal on scroll */
+  .reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.9s ease, transform 0.9s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+  .reveal-delay-4 { transition-delay: 0.4s; }
+
+  /* Horizontal rule */
+  .rule {
+    border: none;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    margin: 0;
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    nav { padding: 24px 28px; }
+    nav.scrolled { padding: 16px 28px; }
+    .nav-links { display: none; }
+    .nav-menu-btn { display: flex; }
+
+    #about, #brands, #service, #journal, #partners, #recruit, #contact {
+      padding: 100px 28px;
+    }
+    footer { padding: 72px 28px 40px; }
+
+    .about-grid,
+    .recruit-container { grid-template-columns: 1fr; gap: 64px; }
+
+    .brand-block { grid-template-columns: 1fr; }
+    .brand-block:nth-child(even) .brand-visual { order: 1; }
+    .brand-block:nth-child(even) .brand-info { order: 2; }
+    .brand-info { padding: 48px 32px; }
+
+    .service-grid { grid-template-columns: 1fr; }
+    .journal-grid { grid-template-columns: 1fr; }
+
+
+
+    .footer-grid { grid-template-columns: 1fr 1fr; gap: 40px; }
+    .footer-bottom { flex-direction: column; gap: 20px; text-align: center; }
+    .footer-legal { flex-wrap: wrap; justify-content: center; }
+
+    .hero-pillars { display: none; }
+    .form-row { grid-template-columns: 1fr; }
+
+    .journal-cats { gap: 20px; flex-wrap: wrap; }
+  }
+
+  @media (max-width: 600px) {
+    .hero-title { font-size: 56px; }
+    .footer-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Custom Cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- Nav -->
+<nav id="navbar">
+  <a href="#home" class="nav-logo">MAGIS<span>.</span></a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#brands">Brands</a></li>
+    <li><a href="#service">Service</a></li>
+    <li><a href="#journal">Journal</a></li>
+    <li><a href="#partners">Press</a></li>
+    <li><a href="#recruit">Recruit</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <button class="nav-menu-btn" id="menuBtn" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-menu-close" id="menuClose">✕</button>
+  <a href="#home" onclick="closeMobileMenu()">Home</a>
+  <a href="#about" onclick="closeMobileMenu()">About</a>
+  <a href="#brands" onclick="closeMobileMenu()">Brands</a>
+  <a href="#service" onclick="closeMobileMenu()">Service</a>
+  <a href="#journal" onclick="closeMobileMenu()">Journal</a>
+  <a href="#partners" onclick="closeMobileMenu()">Press</a>
+  <a href="#recruit" onclick="closeMobileMenu()">Recruit</a>
+  <a href="#contact" onclick="closeMobileMenu()">Contact</a>
+</div>
+
+<!-- HOME -->
+<section id="home">
+  <div class="hero-bg"></div>
+  <div class="hero-grain"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">Magis Co., Ltd. — Tokyo</p>
+    <h1 class="hero-title">Make &amp;<br><em>Transmit.</em></h1>
+    <p class="hero-sub">Apparel &nbsp;×&nbsp; SNS Consulting</p>
+  </div>
+  <div class="hero-pillars">
+    <a href="#brands" class="pillar-link">
+      <span class="pillar-num">01</span>
+      <span class="pillar-name">Apparel</span>
+      <span class="pillar-arrow">Goar.archive &amp; Adams Jewelry →</span>
+    </a>
+    <a href="#service" class="pillar-link" style="text-align:right;">
+      <span class="pillar-num">02</span>
+      <span class="pillar-name">SNS Consulting</span>
+      <span class="pillar-arrow">← Strategy &amp; Brand Support</span>
+    </a>
+  </div>
+  <div class="hero-scroll">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-grid">
+    <div class="about-left">
+      <div class="section-header reveal">
+        <span class="section-label">About</span>
+        <h2 class="section-title">Why we do<br><em>both.</em></h2>
+      </div>
+      <p class="about-mission reveal reveal-delay-1">
+        「モノを作る力」と「伝える力」は、分離した瞬間に半分の力しか持てない。
+      </p>
+      <p class="about-body reveal reveal-delay-2">
+        Magis株式会社は、アパレルブランドの企画・製造から、SNSを軸としたコンサルティングまでを一社で手がける稀有な存在です。私たちが両方をやる理由はシンプルです——真に価値あるものを世に届けるには、作ることと伝えることの両方を深く知っていなければならないからです。
+      </p>
+      <p class="about-body reveal reveal-delay-3">
+        クリエイティブにロジックを、ロジックにクリエイティブを。この往復運動の中にこそ、Magisの本質があります。
+      </p>
+    </div>
+    <div class="about-right">
+      <div class="ceo-card reveal">
+        <span class="ceo-label">Representative Director</span>
+        <div class="ceo-name">大串 朋弘</div>
+        <div class="ceo-title">CEO &amp; Founder</div>
+        <p class="ceo-bio">
+          アパレル業界でのブランド立ち上げ経験と、SNSマーケティングの最前線での実績を持つ。Goar.archiveをゼロから立ち上げ、国内外のファッションシーンで注目を集める。2024年、Magis株式会社を設立。「作ることと伝えること」を両輪に、次世代のクリエイターやブランドを支援する事業を展開中。
+        </p>
+      </div>
+      <div class="company-info reveal reveal-delay-1">
+        <div class="info-row">
+          <span class="info-label">会社名</span>
+          <span class="info-value">Magis株式会社</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">英語名</span>
+          <span class="info-value">Magis Co., Ltd.</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">所在地</span>
+          <span class="info-value">東京都</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">設立</span>
+          <span class="info-value">2024年</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">取引銀行</span>
+          <span class="info-value">GMOあおぞらネット銀行</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">事業内容</span>
+          <span class="info-value">アパレル、SNSコンサルティング</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- BRANDS -->
+<section id="brands">
+  <div class="brands-container">
+    <div class="section-header reveal">
+      <span class="section-label">Brands</span>
+      <h2 class="section-title">Our<br><em>Labels.</em></h2>
+    </div>
+
+    <!-- Goar.archive -->
+    <div class="brand-block reveal">
+      <div class="brand-visual brand-visual-goar">
+        <!-- Goar.archive wordmark SVG -->
+        <svg viewBox="0 0 320 80" xmlns="http://www.w3.org/2000/svg" style="width:240px; opacity:0.75;">
+          <text x="0" y="58" font-family="'Cormorant Garamond', Georgia, serif" font-size="68" font-weight="300" fill="#e8e5e0" letter-spacing="-2">goar</text>
+          <text x="2" y="78" font-family="'Lato', Arial, sans-serif" font-size="11" font-weight="100" fill="#c9a96e" letter-spacing="8">archive</text>
+        </svg>
+      </div>
+      <div class="brand-info">
+        <span class="brand-tag">Apparel — Archive</span>
+        <div class="brand-name">Goar.<br>archive</div>
+        <p class="brand-desc">
+          過去の服への敬意と、現在の空気感を縫い合わせたアーカイブウェアブランド。余計なものを削ぎ落とし、残ったものだけが語る——そのフィロソフィーで国内外のバイヤーとセレクターから支持を集める。東京から発信するサイレントな服たち。
+        </p>
+        <div style="display:flex; gap:16px; flex-wrap:wrap;">
+          <a href="https://goar.tokyo/en" target="_blank" class="btn-outline">Shop →</a>
+          <a href="https://www.instagram.com/goar.archive" target="_blank" class="btn-outline" style="border-color:rgba(255,255,255,0.15); color:var(--light-grey);">Instagram →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Adams jewelry -->
+    <div class="brand-block reveal">
+      <div class="brand-visual brand-visual-adams">
+        <!-- Adams Jewelry wordmark SVG -->
+        <div style="text-align:center;">
+          <svg viewBox="0 0 300 90" xmlns="http://www.w3.org/2000/svg" style="width:220px; opacity:0.8;">
+            <text x="150" y="44" font-family="'Cormorant Garamond', Georgia, serif" font-size="42" font-weight="300" fill="#c9a96e" letter-spacing="3" text-anchor="middle">ADAMS</text>
+            <line x1="30" y1="54" x2="270" y2="54" stroke="#c9a96e" stroke-width="0.5" opacity="0.4"/>
+            <text x="150" y="72" font-family="'Lato', Arial, sans-serif" font-size="9" font-weight="100" fill="#a8a8a8" letter-spacing="9" text-anchor="middle">JEWELRY</text>
+          </svg>
+        </div>
+      </div>
+      <div class="brand-info">
+        <span class="brand-tag">Jewelry — Handcraft</span>
+        <div class="brand-name">Adams<br>Jewelry</div>
+        <p class="brand-desc">
+          素材そのものの声を聞きながら形にするジュエリーライン。シルバー、ゴールド、天然石——それぞれの素材が持つ固有の語りを大切に、身につける人のストーリーと共鳴するピースを制作する。日常の中に潜む特別を、指先から。
+        </p>
+        <div style="display:flex; gap:16px; flex-wrap:wrap;">
+          <a href="https://adamsjewelry.official.ec/" target="_blank" class="btn-outline">Shop →</a>
+          <a href="https://www.instagram.com/adams.jewelry.official" target="_blank" class="btn-outline" style="border-color:rgba(255,255,255,0.15); color:var(--light-grey);">Instagram →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- SERVICE -->
+<section id="service">
+  <div class="service-container">
+    <div class="section-header reveal">
+      <span class="section-label">Service</span>
+      <h2 class="section-title">What we<br><em>offer.</em></h2>
+    </div>
+
+    <div class="service-grid">
+      <div class="service-card reveal">
+        <div class="service-num">01</div>
+        <div class="service-title">SNS Strategy</div>
+        <p class="service-desc">感覚論に頼らない、再現性のある運用設計。コンテンツ戦略から投稿スケジュール、分析・改善サイクルまでを仕組み化し、担当者が変わっても成果が落ちない体制を構築します。</p>
+      </div>
+      <div class="service-card reveal reveal-delay-1">
+        <div class="service-num">02</div>
+        <div class="service-title">Apparel Support</div>
+        <p class="service-desc">ブランド立ち上げのコンセプト設計から、工場ソーシング、EC構築、販路開拓まで。アパレルを作る側も運営する側も知っているMagisだからこそできる、トータルサポート。</p>
+      </div>
+      <div class="service-card reveal reveal-delay-2">
+        <div class="service-num">03</div>
+        <div class="service-title">Brand Consulting</div>
+        <p class="service-desc">「なぜこのブランドが存在するのか」を言語化するところから始まる、長期的なブランド価値の設計。世界観、トーン&amp;マナー、コミュニティ形成まで一気通貫でサポート。</p>
+      </div>
+    </div>
+
+
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- JOURNAL -->
+<section id="journal">
+  <div class="journal-container">
+    <div class="section-header reveal">
+      <span class="section-label">Journal</span>
+      <h2 class="section-title">Words &amp;<br><em>Stories.</em></h2>
+    </div>
+
+    <div class="journal-cats">
+      <button class="cat-btn active" onclick="filterJournal('all', this)">All</button>
+      <button class="cat-btn" onclick="filterJournal('sns', this)">SNS Marketing</button>
+      <button class="cat-btn" onclick="filterJournal('brand', this)">Brand Story</button>
+      <button class="cat-btn" onclick="filterJournal('inside', this)">Inside Magis</button>
+    </div>
+
+    <div class="journal-grid" id="journalGrid">
+      <div class="journal-card" data-cat="sns">
+        <div class="journal-thumb"><span class="journal-thumb-text">01</span></div>
+        <span class="journal-cat-tag">SNS Marketing</span>
+        <div class="journal-title">2025年のInstagramアルゴリズム変更とファッションブランドへの影響</div>
+        <span class="journal-date">2025.03.18</span>
+      </div>
+      <div class="journal-card" data-cat="brand">
+        <div class="journal-thumb"><span class="journal-thumb-text">02</span></div>
+        <span class="journal-cat-tag">Brand Story</span>
+        <div class="journal-title">Goar.archiveの最初の一着が生まれるまで——サンプルルームの記録</div>
+        <span class="journal-date">2025.02.27</span>
+      </div>
+      <div class="journal-card" data-cat="inside">
+        <div class="journal-thumb"><span class="journal-thumb-text">03</span></div>
+        <span class="journal-cat-tag">Inside Magis</span>
+        <div class="journal-title">Magisが「クリエイティブにロジックを」という言葉に辿り着いた理由</div>
+        <span class="journal-date">2025.02.10</span>
+      </div>
+      <div class="journal-card" data-cat="sns">
+        <div class="journal-thumb"><span class="journal-thumb-text">04</span></div>
+        <span class="journal-cat-tag">SNS Marketing</span>
+        <div class="journal-title">フォロワー数より重要な「エンゲージメント率」の正しい読み方</div>
+        <span class="journal-date">2025.01.22</span>
+      </div>
+      <div class="journal-card" data-cat="brand">
+        <div class="journal-thumb"><span class="journal-thumb-text">05</span></div>
+        <span class="journal-cat-tag">Brand Story</span>
+        <div class="journal-title">Adams Jewelryが天然石にこだわる理由——素材と対話する制作プロセス</div>
+        <span class="journal-date">2025.01.08</span>
+      </div>
+      <div class="journal-card" data-cat="inside">
+        <div class="journal-thumb"><span class="journal-thumb-text">06</span></div>
+        <span class="journal-cat-tag">Inside Magis</span>
+        <div class="journal-title">2025年のMagis——この一年で変わったこと、変えなかったこと</div>
+        <span class="journal-date">2024.12.30</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- PRESS -->
+<section id="partners">
+  <div class="partners-container">
+    <div class="section-header reveal">
+      <span class="section-label">Press</span>
+      <h2 class="section-title">Media &amp;<br><em>Press.</em></h2>
+    </div>
+    <p class="reveal" style="font-size:13px; line-height:2; color:var(--light-grey); max-width:560px; margin-bottom:48px;">
+      メディア掲載・取材のご依頼、ブランド素材のご要望はお気軽にご連絡ください。ロゴデータ・製品写真・プレスリリースなどの素材をご用意しています。
+    </p>
+    <div style="text-align:left;" class="reveal">
+      <a href="#contact" class="press-btn">
+        Press Kit &amp; Media Assets
+        <span class="press-btn-arrow">↓</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- RECRUIT -->
+<section id="recruit">
+  <div class="recruit-container">
+    <div class="recruit-left">
+      <div class="section-header reveal">
+        <span class="section-label">Recruit</span>
+        <h2 class="section-title">Join<br><em>Magis.</em></h2>
+      </div>
+      <p class="recruit-message reveal reveal-delay-1">
+        "クリエイティブにロジックを、<br>ロジックにクリエイティブを。"
+      </p>
+      <p class="recruit-body reveal reveal-delay-2">
+        私たちが求めるのは、作ることと伝えることの両方に本気で向き合える人です。肩書きよりも視点を、経験よりも好奇心を重視します。アパレルでもSNSでも、Magisのフィールドで一緒に実験しましょう。
+      </p>
+    </div>
+    <div class="recruit-right reveal reveal-delay-1">
+      <ul class="jobs-list">
+        <li class="job-item">
+          <div>
+            <div class="job-title">SNSコンサルタント</div>
+          </div>
+          <div style="display:flex; gap:20px; align-items:center;">
+            <span class="job-type">業務委託</span>
+            <span class="job-arrow">→</span>
+          </div>
+        </li>
+        <li class="job-item">
+          <div>
+            <div class="job-title">アパレルディレクター</div>
+          </div>
+          <div style="display:flex; gap:20px; align-items:center;">
+            <span class="job-type">正社員</span>
+            <span class="job-arrow">→</span>
+          </div>
+        </li>
+        <li class="job-item">
+          <div>
+            <div class="job-title">クリエイティブインターン</div>
+          </div>
+          <div style="display:flex; gap:20px; align-items:center;">
+            <span class="job-type">インターン</span>
+            <span class="job-arrow">→</span>
+          </div>
+        </li>
+        <li class="job-item">
+          <div>
+            <div class="job-title">コンテンツクリエイター</div>
+          </div>
+          <div style="display:flex; gap:20px; align-items:center;">
+            <span class="job-type">業務委託</span>
+            <span class="job-arrow">→</span>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-container">
+    <div class="section-header reveal" style="text-align:center;">
+      <span class="section-label">Contact</span>
+      <h2 class="section-title">Let's<br><em>talk.</em></h2>
+    </div>
+    <p class="contact-intro reveal">
+      アパレル事業のご相談、コンサルティングのお問い合わせ、<br>メディア掲載・コラボレーションのご提案など、お気軽にどうぞ。
+    </p>
+    <div class="contact-form reveal">
+      <div class="form-row">
+        <div class="form-field">
+          <input type="text" placeholder="Name">
+        </div>
+        <div class="form-field">
+          <input type="email" placeholder="Email">
+        </div>
+      </div>
+      <div class="form-field">
+        <select>
+          <option value="" disabled selected style="color:#6b6b6b;">お問い合わせの種類 / Inquiry Type</option>
+          <option>SNSコンサルティング</option>
+          <option>アパレル事業・ブランド支援</option>
+          <option>ブランド（Goar.archive / Adams Jewelry）</option>
+          <option>採用について</option>
+          <option>メディア・プレス</option>
+          <option>その他</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <textarea placeholder="Message"></textarea>
+      </div>
+      <div style="text-align:center;">
+        <button class="btn-submit">Send Message</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand">MAGIS<span>.</span></div>
+      <p class="footer-tagline">
+        Make &amp; Transmit.<br>
+        アパレルとSNSコンサルティングの<br>
+        交差点に立つ、東京発のクリエイティブカンパニー。
+      </p>
+    </div>
+    <div>
+      <div class="footer-col-title">Navigate</div>
+      <ul class="footer-links">
+        <li><a href="#about">About</a></li>
+        <li><a href="#brands">Brands</a></li>
+        <li><a href="#service">Service</a></li>
+        <li><a href="#journal">Journal</a></li>
+        <li><a href="#recruit">Recruit</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Brands</div>
+      <ul class="footer-links">
+        <li><a href="https://goar.tokyo/en" target="_blank">Goar.archive</a></li>
+        <li><a href="#">Adams Jewelry</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Social</div>
+      <ul class="footer-links">
+        <li><a href="#">Instagram</a></li>
+        <li><a href="#">X (Twitter)</a></li>
+        <li><a href="#">note</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy">© 2025 Magis Co., Ltd. All rights reserved.</span>
+    <div class="footer-legal">
+      <a href="#">Privacy Policy</a>
+      <a href="#">特定商取引法に基づく表記</a>
+      <a href="#">Terms of Service</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Cursor
+  const cursor = document.getElementById('cursor');
+  const cursorRing = document.getElementById('cursorRing');
+  document.addEventListener('mousemove', e => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top = e.clientY + 'px';
+    setTimeout(() => {
+      cursorRing.style.left = e.clientX + 'px';
+      cursorRing.style.top = e.clientY + 'px';
+    }, 80);
+  });
+  document.querySelectorAll('a, button, .job-item, .journal-card, .partner-cell').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.width = '16px';
+      cursor.style.height = '16px';
+      cursorRing.style.width = '48px';
+      cursorRing.style.height = '48px';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.style.width = '8px';
+      cursor.style.height = '8px';
+      cursorRing.style.width = '32px';
+      cursorRing.style.height = '32px';
+    });
+  });
+
+  // Nav scroll
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 60);
+  });
+
+  // Mobile menu
+  const menuBtn = document.getElementById('menuBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+  const menuClose = document.getElementById('menuClose');
+  menuBtn.addEventListener('click', () => mobileMenu.classList.add('open'));
+  menuClose.addEventListener('click', () => mobileMenu.classList.remove('open'));
+  function closeMobileMenu() { mobileMenu.classList.remove('open'); }
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+
+  // Journal filter
+  function filterJournal(cat, btn) {
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.journal-card').forEach(card => {
+      if (cat === 'all' || card.dataset.cat === cat) {
+        card.style.display = 'block';
+        card.style.opacity = '0';
+        setTimeout(() => { card.style.transition = 'opacity 0.4s'; card.style.opacity = '1'; }, 10);
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  }
+</script>
+</body>
+</html>
